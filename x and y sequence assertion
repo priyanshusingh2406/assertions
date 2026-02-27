@@ -1,0 +1,44 @@
+// *****************************************************
+// File name : x and y sequence assertion
+// Owner : Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date : 28 September 2025
+  
+// Description : This code genarate a clock and gives simple values to signals x and y. It checks whenever x goes high, from the next clock cycle y should be high for at least one cycle. If this rule is broken, an error is shown
+
+// *********************************************************
+
+module tb;
+  bit clk;
+  bit x,y;
+  
+  initial clk=0;
+  always #5 clk = ~clk;
+  
+  initial begin
+    x =0;
+    y=0;
+    
+    @(posedge clk);
+    @(posedge clk) x=1;
+    @(posedge clk)begin
+      x=0;
+      y=1;
+      end
+    
+    
+    @(posedge clk) y=0;
+    
+    #100 $finish;
+  end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  assert property (@(posedge clk) x |=>  y[*1:$])
+
+        else
+          $error("Assertion is failed at time %t", $time);
+  
+endmodule
