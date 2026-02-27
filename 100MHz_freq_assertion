@@ -1,0 +1,60 @@
+// ******************************************************
+// File name - 100MHz_freq_assertion
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 28 September 2025
+
+// Description - This testbench creates a clock signal and measures how long one clock cycle takes by looking at two rising edges. It then calculates the clock frequency from that period.  It check if the clock is 100 MHz. 
+// *****************************************************************  .
+
+
+
+module tb;
+  bit clk;
+  time clock_period_1;
+  time clock_period_2;
+  time final_clock_period;
+  int freq;
+  
+  
+  
+  initial clk =0;
+  always #5 clk = ~clk;
+  
+  initial begin
+    
+    
+    @(posedge clk) begin
+      $display("Current simulation time %t", $time);
+      clock_period_1 = $time;
+      $display ("current clock period_1 = %d", clock_period_1); 
+    end
+    
+    @(posedge clk) begin
+      $display("Current simulation time %t", $time);
+      clock_period_2 = $time;
+      $display ("current clock period_2 = %d", clock_period_2); 
+    end
+    
+    
+    final_clock_period = clock_period_2 - clock_period_1;
+    $display("So the Time period of clock is %d", final_clock_period);
+    
+    freq = 1.0e9/final_clock_period;
+    $display("The frequency is %d", freq);
+    
+  
+    #100 $finish;
+  end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  
+  assert property ( @(posedge clk) ##2 (freq == 100000000))
+    $display("clock is 100 Mhz");
+    else
+      $error("clock is not 100 Mhz");
+  
+endmodule
