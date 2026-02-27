@@ -1,0 +1,55 @@
+// **********************************************************
+// File name : x_y_immediate_assert
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 28 September 2025
+
+// Description - This makes a clock and drives signals x and y. It checks that whenever x is high, y should also be high. If the rule is followed, a success message is shown; if not, an error is reported.
+  
+// ***********************************************************  
+
+module tb;
+  bit clk;
+  bit x,y;
+  
+  initial clk =0;
+  always #5 clk = ~clk;
+  
+ initial begin
+   x=0;
+   y=0;
+   
+//    @(posedge clk) begin
+//      x=1;
+//      y=1;
+//    end
+   
+//    @(posedge clk) begin
+//      x=0;
+//      y=0;
+//     end
+   
+   
+   
+   @(posedge clk) x=1;
+   @(posedge clk) begin
+     x=0;
+     y=1;
+   end
+   @(posedge clk) y=0;
+   
+   
+   #50 $finish;
+ end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  
+  assert property (@(posedge clk) x|-> y)
+    $display("Assertion is passed at time %t", $time);
+    else
+      $error("Assertion is failed at time %t", $time);
+  
+endmodule
