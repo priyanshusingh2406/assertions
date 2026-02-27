@@ -1,0 +1,52 @@
+// ***********************************************************
+// File name - x_y_delayed_assertion
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 28 September 2025
+
+// Description - This code generates a clock and drives x and y. It checks that whenever x is high, y should go high in a later cycle.
+
+// **************************************************************
+
+module tb;
+  bit clk;
+  bit x,y;
+  
+  initial clk =0;
+  always #5 clk = ~clk;
+  
+ initial begin
+   x=0;
+   y=0;
+   
+   @(posedge clk) x=1;
+   @(posedge clk) x=0;
+   
+   @(posedge clk) y=1;
+   
+   
+   
+//    @(posedge clk) x=1;
+//    @(posedge clk) begin
+//      x=0;
+//      y=1;
+//    end
+//    @(posedge clk) y=0;
+   
+ 
+   
+   
+   #50 $finish;
+ end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  
+  assert property (@(posedge clk) x|=> y)
+    $display("Assertion is passed at time %t", $time);
+    else
+      $error("Assertion is failed at time %t", $time);
+  
+endmodule
