@@ -1,0 +1,46 @@
+// *******************************************************************
+// File name - Assertion basic example
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 26 September 2025
+
+// Description - This code demonstrates that how to apply assertion in testbench. In this code assertion is activated on every positive edge of clock and checks if x is high then y should be high in the next cycle.
+  
+// ****************************************************************************
+
+
+
+module tb;
+  logic clk;
+  bit x,y;
+    initial clk =0;
+    always #5 clk = ~clk; 
+  
+  initial begin
+    
+       x = 0; y = 0;
+    #20 x = 1;       // x goes high at time 12
+    #20 y = 1;       // y goes high at time 22 (1 cycle after x, since clk period = 10)
+    #5 x = 1;
+    #5 y = 0;
+    #5 x =0;
+    
+    #100 $finish;
+      
+      
+    
+     #100 $finish;
+    
+ 
+  end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  assert property (@(posedge clk) x |=> y)
+    $display("assertion passed at time %t", $time);
+    else
+      $display("assertion failed at time %t", $time);
+  
+endmodule
