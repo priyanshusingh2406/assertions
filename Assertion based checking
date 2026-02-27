@@ -1,0 +1,67 @@
+// **************************************************
+// File name - Assertion based checking
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 28 September 2025
+
+// Description - Thiscode generates a clock and applies some inputs to signals x and y. It checks an assertion that says: whenever x goes high, after 5 clock cycles y should stay high for 3 cycles and then go low. If this rule is not followed, an error message is printed.
+
+// **********************************************************
+
+
+
+module tb;
+  logic clk;
+  bit x,y;
+  
+    initial clk =0;
+    always #5 clk = ~clk; 
+  
+  
+  
+  initial begin
+       x = 0; 
+       y = 0; 
+     
+    @(posedge clk);
+    @(posedge clk) x =1;
+    @(posedge clk) x =0;
+    repeat(5) @(posedge clk);
+    y=1;
+    repeat(3) @(posedge clk);
+    y=0;
+    
+    
+    
+    repeat(3) @(posedge clk);
+    
+    @(posedge clk) x =1;
+    @(posedge clk) x =0;
+    
+    repeat(3) @(posedge clk);
+    y=1;
+    repeat(3) @(posedge clk);
+    y=0;
+    
+    #100 $finish;
+    
+  end
+  
+
+  
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+ 
+ 
+  assert property (@(posedge clk)  x |-> ##5 (y[*3] ##0 !y))
+    
+    else
+      $display("Assertion Failed at time %t", $time);
+    
+    
+    
+    
+endmodule
