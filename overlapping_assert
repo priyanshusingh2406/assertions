@@ -1,0 +1,50 @@
+I// **********************************************************
+// File name - overlapping_assert
+// Owner - Priyanshu Singh (priyanshus@pulsewavesemi.com)
+// Date - 28 September 2025
+
+// Description - This code creates a clock and drives signals x and y together. Both x and y go high at the same clock edge and then low at the next. The assertion checks that whenever x is high, y must also be high in the same cycle. If the condition is met, a success message is shown; otherwise, an error is reported.
+
+
+// ***************************************************************
+
+module tb;
+  bit clk;
+  bit x,y;
+  
+  initial clk =0;
+  always #5 clk = ~clk;
+  
+ initial begin
+   x=0;
+   y=0;
+   
+   @(posedge clk) begin
+     x=1;
+     y=1;
+   end
+   
+   @(posedge clk) begin
+     x=0;
+     y=0;
+    end
+   
+   
+   
+
+   
+   #50 $finish;
+ end
+  
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars(0, tb);
+  end
+  
+  
+  assert property (@(posedge clk) x|-> y)
+    $display("Assertion is passed at time %t", $time);
+    else
+      $error("Assertion is failed at time %t", $time);
+  
+endmodule
